@@ -29,6 +29,7 @@ from flask_ckeditor.utils import cleanify
 import smtplib, os
 from dotenv import load_dotenv
 from typing import List
+from datetime import datetime as dt
 
 load_dotenv()
 my_email = os.getenv("GMAIL_APP_MAIL")
@@ -126,6 +127,18 @@ gravatar = Gravatar(  # creating profile picture - a random small img
 )
 
 
+@app.context_processor
+def inject_now_year():
+    return {"now_year": dt.today().year}
+
+
+@app.route("/")
+def get_all_posts():
+    result = db.session.execute(db.select(BlogPost))
+    posts = result.scalars().all()
+    return render_template("index.html", all_posts=posts)
+
+
 @app.route("/register", methods=["POST", "GET"])
 def register():
     new_user_form = NewUser()
@@ -179,13 +192,6 @@ def logout():
     logout_user()
     print("Logged out")
     return redirect(url_for("get_all_posts"))
-
-
-@app.route("/")
-def get_all_posts():
-    result = db.session.execute(db.select(BlogPost))
-    posts = result.scalars().all()
-    return render_template("index.html", all_posts=posts)
 
 
 @app.route("/post/<int:post_id>", methods=["POST", "GET"])
