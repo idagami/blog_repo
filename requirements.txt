@@ -25,3 +25,4 @@ bleach==6.1.0
 email_validator==2.2.0
 gunicorn==23.0.0
 psycopg2-binary==2.9.11
+python-dotenv==1.2.1
